@@ -1,7 +1,13 @@
 const express = require('express');
 const router = express.Router();
+const { body } = require('express-validator');
 const Item = require('../models/Item');
 const auth = require('../middlewares/auth');
+const validate = require('../middlewares/validate');
+
+const itemRules = [
+  body('name').trim().notEmpty().withMessage('이름을 입력해주세요.'),
+];
 
 // 전체 조회
 router.get('/', auth, async (req, res) => {
@@ -25,7 +31,7 @@ router.get('/:id', auth, async (req, res) => {
 });
 
 // 생성
-router.post('/', auth, async (req, res) => {
+router.post('/', auth, itemRules, validate, async (req, res) => {
   try {
     const item = await Item.create({ name: req.body.name });
     res.status(201).json(item);
@@ -35,7 +41,7 @@ router.post('/', auth, async (req, res) => {
 });
 
 // 수정
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', auth, itemRules, validate, async (req, res) => {
   try {
     const item = await Item.findByIdAndUpdate(
       req.params.id,

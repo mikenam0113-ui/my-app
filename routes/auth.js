@@ -2,10 +2,23 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const { body } = require('express-validator');
 const User = require('../models/User');
+const validate = require('../middlewares/validate');
+
+const registerRules = [
+  body('name').trim().notEmpty().withMessage('이름을 입력해주세요.'),
+  body('email').isEmail().withMessage('올바른 이메일을 입력해주세요.'),
+  body('password').isLength({ min: 6 }).withMessage('비밀번호는 최소 6자 이상이어야 합니다.'),
+];
+
+const loginRules = [
+  body('email').isEmail().withMessage('올바른 이메일을 입력해주세요.'),
+  body('password').notEmpty().withMessage('비밀번호를 입력해주세요.'),
+];
 
 // 회원가입
-router.post('/register', async (req, res) => {
+router.post('/register', registerRules, validate, async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const existing = await User.findOne({ email });
@@ -25,7 +38,7 @@ router.post('/register', async (req, res) => {
 });
 
 // 로그인
-router.post('/login', async (req, res) => {
+router.post('/login', loginRules, validate, async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
