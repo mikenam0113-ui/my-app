@@ -4,6 +4,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const itemsRouter = require('./routes/items');
+const usersRouter = require('./routes/users');
 const logger = require('./middlewares/logger');
 const connectDB = require('./config/db');
 
@@ -17,6 +18,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/items', itemsRouter);
+app.use('/users', usersRouter);
 
 app.listen(PORT, () => {
   console.log(`서버가 http://localhost:${PORT} 에서 실행 중입니다.`);
