@@ -23,6 +23,10 @@ app.use('/auth', authRouter);
 app.use('/items', itemsRouter);
 app.use('/users', usersRouter);
 
+app.use((req, res, next) => {
+  res.status(404).json({ success: false, message: `${req.url} 경로를 찾을 수 없습니다.` });
+});
+
 app.use(errorHandler);
 
 app.listen(PORT, () => {
