@@ -5,6 +5,9 @@ const PORT = process.env.PORT || 3000;
 
 const itemsRouter = require('./routes/items');
 const logger = require('./middlewares/logger');
+const connectDB = require('./config/db');
+
+connectDB();
 
 app.use(express.json());
 app.use(logger);
