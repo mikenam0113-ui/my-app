@@ -6,12 +6,14 @@ const PORT = process.env.PORT || 3000;
 const itemsRouter = require('./routes/items');
 const usersRouter = require('./routes/users');
 const authRouter = require('./routes/auth');
+const cors = require('cors');
 const logger = require('./middlewares/logger');
 const errorHandler = require('./middlewares/errorHandler');
 const connectDB = require('./config/db');
 
 connectDB();
 
+app.use(cors());
 app.use(express.json());
 app.use(logger);
 
