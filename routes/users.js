@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const auth = require('../middlewares/auth');
 
 // 전체 조회
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
     const users = await User.find().select('-password');
     res.json(users);
@@ -13,7 +14,7 @@ router.get('/', async (req, res) => {
 });
 
 // 단일 조회
-router.get('/:id', async (req, res) => {
+router.get('/:id', auth, async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select('-password');
     if (!user) return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
@@ -24,7 +25,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // 생성
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const user = new User({ name, email, password });
@@ -36,7 +37,7 @@ router.post('/', async (req, res) => {
 });
 
 // 수정
-router.put('/:id', async (req, res) => {
+router.put('/:id', auth, async (req, res) => {
   try {
     const { name, email } = req.body;
     const user = await User.findByIdAndUpdate(
@@ -52,7 +53,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // 삭제
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
     if (!user) return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
