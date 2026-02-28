@@ -5,6 +5,7 @@ const PORT = process.env.PORT || 3000;
 
 const itemsRouter = require('./routes/items');
 const usersRouter = require('./routes/users');
+const authRouter = require('./routes/auth');
 const logger = require('./middlewares/logger');
 const connectDB = require('./config/db');
 
@@ -17,6 +18,7 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
+app.use('/auth', authRouter);
 app.use('/items', itemsRouter);
 app.use('/users', usersRouter);
 
