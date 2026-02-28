@@ -7,6 +7,7 @@ const itemsRouter = require('./routes/items');
 const usersRouter = require('./routes/users');
 const authRouter = require('./routes/auth');
 const logger = require('./middlewares/logger');
+const errorHandler = require('./middlewares/errorHandler');
 const connectDB = require('./config/db');
 
 connectDB();
@@ -21,6 +22,8 @@ app.get('/', (req, res) => {
 app.use('/auth', authRouter);
 app.use('/items', itemsRouter);
 app.use('/users', usersRouter);
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`서버가 http://localhost:${PORT} 에서 실행 중입니다.`);
