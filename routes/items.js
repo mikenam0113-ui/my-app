@@ -1,44 +1,62 @@
 const express = require('express');
 const router = express.Router();
-
-let items = [
-  { id: 1, name: '아이템 1' },
-  { id: 2, name: '아이템 2' },
-];
+const Item = require('../models/Item');
 
 // 전체 조회
-router.get('/', (req, res) => {
-  res.json(items);
+router.get('/', async (req, res) => {
+  try {
+    const items = await Item.find();
+    res.json(items);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 // 단일 조회
-router.get('/:id', (req, res) => {
-  const item = items.find(i => i.id === parseInt(req.params.id));
-  if (!item) return res.status(404).json({ message: '아이템을 찾을 수 없습니다.' });
-  res.json(item);
+router.get('/:id', async (req, res) => {
+  try {
+    const item = await Item.findById(req.params.id);
+    if (!item) return res.status(404).json({ message: '아이템을 찾을 수 없습니다.' });
+    res.json(item);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 // 생성
-router.post('/', (req, res) => {
-  const newItem = { id: items.length + 1, name: req.body.name };
-  items.push(newItem);
-  res.status(201).json(newItem);
+router.post('/', async (req, res) => {
+  try {
+    const item = await Item.create({ name: req.body.name });
+    res.status(201).json(item);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 });
 
 // 수정
-router.put('/:id', (req, res) => {
-  const item = items.find(i => i.id === parseInt(req.params.id));
-  if (!item) return res.status(404).json({ message: '아이템을 찾을 수 없습니다.' });
-  item.name = req.body.name;
-  res.json(item);
+router.put('/:id', async (req, res) => {
+  try {
+    const item = await Item.findByIdAndUpdate(
+      req.params.id,
+      { name: req.body.name },
+      { new: true }
+    );
+    if (!item) return res.status(404).json({ message: '아이템을 찾을 수 없습니다.' });
+    res.json(item);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 // 삭제
-router.delete('/:id', (req, res) => {
-  const index = items.findIndex(i => i.id === parseInt(req.params.id));
-  if (index === -1) return res.status(404).json({ message: '아이템을 찾을 수 없습니다.' });
-  items.splice(index, 1);
-  res.json({ message: '삭제되었습니다.' });
+router.delete('/:id', async (req, res) => {
+  try {
+    const item = await Item.findByIdAndDelete(req.params.id);
+    if (!item) return res.status(404).json({ message: '아이템을 찾을 수 없습니다.' });
+    res.json({ message: '삭제되었습니다.' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 module.exports = router;
