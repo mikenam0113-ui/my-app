@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const Item = require('../models/Item');
+const auth = require('../middlewares/auth');
 
 // 전체 조회
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
     const items = await Item.find();
     res.json(items);
@@ -13,7 +14,7 @@ router.get('/', async (req, res) => {
 });
 
 // 단일 조회
-router.get('/:id', async (req, res) => {
+router.get('/:id', auth, async (req, res) => {
   try {
     const item = await Item.findById(req.params.id);
     if (!item) return res.status(404).json({ message: '아이템을 찾을 수 없습니다.' });
@@ -24,7 +25,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // 생성
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
   try {
     const item = await Item.create({ name: req.body.name });
     res.status(201).json(item);
@@ -34,7 +35,7 @@ router.post('/', async (req, res) => {
 });
 
 // 수정
-router.put('/:id', async (req, res) => {
+router.put('/:id', auth, async (req, res) => {
   try {
     const item = await Item.findByIdAndUpdate(
       req.params.id,
@@ -49,7 +50,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // 삭제
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
   try {
     const item = await Item.findByIdAndDelete(req.params.id);
     if (!item) return res.status(404).json({ message: '아이템을 찾을 수 없습니다.' });
